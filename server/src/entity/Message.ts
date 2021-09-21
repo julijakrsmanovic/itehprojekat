@@ -15,12 +15,15 @@ export class Message {
     @PrimaryColumn()
     userId2: number;
 
+    @Column()
+    senderId: number;
     @ManyToOne(t => Relationship, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId1', referencedColumnName: 'userId1' })
     @JoinColumn({ name: 'userId2', referencedColumnName: 'userId2' })
     relationship: Relationship
 
-    @ManyToOne(t => User, { eager: true })
+    @ManyToOne(t => User)
+    @JoinColumn({ name: 'senderId' })
     sender: User;
 
     @Column()

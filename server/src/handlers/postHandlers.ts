@@ -75,3 +75,18 @@ export async function removeComment(req: Request, res: Response) {
     })
     res.sendStatus(204);
 }
+
+export async function getAllPosts(req: Request, res: Response) {
+
+    const user = (req.session as any).user as User;
+    if (user.isAdmin) {
+        res.json(await getRepository(Post).find());
+        return;
+    }
+    const posts = await getRepository(Post).find();
+    const rel = [...user.rel2, ...user.rel1]
+    const filtered = posts.filter(post => {
+        return post.user.id === user.id || rel.find(r => r.userId1 === post.user.id || r.userId2 === post.user.id) !== undefined;
+    })
+    res.json(filtered);
+}

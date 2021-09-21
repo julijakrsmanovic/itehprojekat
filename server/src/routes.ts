@@ -1,8 +1,5 @@
-import { Request, Response } from "express";
-import { Post } from "./entity/Post";
-import { User } from "./entity/User";
-import getAllRoute from "./handlers/getAllRoute";
-import { createComment, createPost, deletePost, removeComment } from "./handlers/postHandlers";
+import { createComment, createPost, deletePost, getAllPosts, removeComment } from "./handlers/postHandlers";
+import { deleteUser, getAllUsers, respondToRequest, sendFriendRequest, sendMessage, updateUser } from "./handlers/userHandler";
 import { renameFile, uplaodMiddleware } from "./util";
 
 
@@ -15,11 +12,11 @@ export interface Route {
 export const Routes: Route[] = [{
     method: 'get',
     route: '/post',
-    action: [getAllRoute(Post)]
+    action: [getAllPosts]
 }, {
     method: 'get',
     route: "/user",
-    action: [getAllRoute(User)]
+    action: [getAllUsers]
 }, {
     method: 'post',
     route: '/post',
@@ -36,4 +33,24 @@ export const Routes: Route[] = [{
     method: 'delete',
     route: '/post/:id',
     action: [deletePost]
+}, {
+    method: 'patch',
+    route: '/user',
+    action: [uplaodMiddleware, renameFile('image'), updateUser]
+}, {
+    method: 'delete',
+    route: '/user/:id',
+    action: [deleteUser]
+}, {
+    method: 'post',
+    route: '/relationsip',
+    action: [sendFriendRequest]
+}, {
+    method: 'patch',
+    route: '/relationsip/:id',
+    action: [respondToRequest]
+}, {
+    method: 'post',
+    route: '/message',
+    action: [sendMessage]
 }];

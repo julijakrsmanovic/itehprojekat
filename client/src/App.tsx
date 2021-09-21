@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import { User } from './model';
+import axios from 'axios';
+import { SERVER } from './util';
+import Navbar from './components/Navbar';
+import Routes from './components/Routes';
+axios.defaults.withCredentials = true;
 function App() {
+
+  const [user, setUser] = useState<User | undefined>(undefined)
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(SERVER + '/check', { withCredentials: true }).then(res => {
+      setUser(res.data);
+    }).finally(() => {
+      setLoading(false);
+    })
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar user={user} />
+      <Routes user={user} />
     </div>
   );
 }

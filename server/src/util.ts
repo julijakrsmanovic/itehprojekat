@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as multer from "multer";
 import * as path from "path";
 import * as fs from "fs";
+import { v4 } from 'uuid'
 export const uplaodMiddleware = multer({
     dest: '/uploads', fileFilter: function (req, file, cb) {
         if (!file) {
@@ -10,7 +11,12 @@ export const uplaodMiddleware = multer({
             cb(null, true);
         }
     }
-}).single('image');
+}).fields([
+    {
+        name: 'image',
+        maxCount: 1
+    }
+])
 
 
 export function renameFile(name: string) {
@@ -27,9 +33,10 @@ export function renameFile(name: string) {
         }
         const file = request.files[name][0];
         const tempPath = file.path;
-        const targetPath = path.resolve('uploads/' + file.originalname);
+        const imgName = 'uploads/' + v4() + '-' + file.originalname
+        const targetPath = path.resolve(imgName);
         const data = request.body;
-        data[name] = 'uploads/' + file.originalname;
+        data[name] = imgName;
         fs.rename(tempPath, targetPath, err => {
 
         })

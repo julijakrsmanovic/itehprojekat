@@ -12,11 +12,11 @@ export class Relationship {
     @PrimaryColumn()
     userId2: number;
 
-    @ManyToOne(t => User, { onDelete: 'CASCADE' })
+    @ManyToOne(t => User, u => u.rel1, { onDelete: 'CASCADE', eager: false })
     @JoinColumn({ name: 'userId1' })
     user1: User
 
-    @ManyToOne(t => User, { onDelete: 'CASCADE' })
+    @ManyToOne(t => User, u => u.rel2, { onDelete: 'CASCADE', eager: false })
     @JoinColumn({ name: 'userId2' })
     user2: User
 

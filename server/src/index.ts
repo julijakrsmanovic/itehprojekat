@@ -1,24 +1,23 @@
 import * as cors from 'cors';
 import * as express from "express";
-import * as http from 'http';
+import * as https from 'https';
 import "reflect-metadata";
-import * as io from 'socket.io';
 import { createConnection, getRepository } from "typeorm";
 import { User } from "./entity/User";
 import * as session from "express-session";
-import * as multer from 'multer';
-import * as path from 'path';
 import { Routes } from './routes';
+import * as fs from 'fs'
 import { renameFile, uplaodMiddleware } from './util';
 
 
 
 createConnection().then(async connection => {
 
-    // create express app
+
     const app = express();
-    const server = http.createServer(app);
-    const socket = new io.Server(server);
+    const key = fs.readFileSync('./key.pem', 'utf8');
+    const cert = fs.readFileSync('./cert.pem', 'utf8');
+
 
     app.use(cors({
         credentials: true,//protiv xss napada
@@ -35,7 +34,7 @@ createConnection().then(async connection => {
         saveUninitialized: false,
         cookie: {
             sameSite: 'none',
-            secure: false,
+            secure: true,
             maxAge: 1000 * 60 * 10,
             httpOnly: true,
         }
@@ -59,6 +58,7 @@ createConnection().then(async connection => {
 
     })
     app.post('/register', async (req, res, next) => {
+
         const user = req.body as User;
         const users = await getRepository(User).find({
             where: {
@@ -69,14 +69,18 @@ createConnection().then(async connection => {
         if (users.length > 0) {
             res.status(400).send('User already exists');
         } else {
+
             next();
         }
     }, uplaodMiddleware, renameFile('image'), async (req, res) => {
         const user = req.body as User;
-        const insertResult = await getRepository(User).insert(user);
+
+        const insertResult = await getRepository(User).insert({ ...user, isAdmin: false });
+
         user.id = insertResult.identifiers[0].id;
         (req.session as any).user = user;
         req.session.save();
+        console.log((req.session as any))
         res.json(user);
     })
     app.post('/logout', async (request: express.Request, response: express.Response) => {
@@ -90,6 +94,7 @@ createConnection().then(async connection => {
 
     app.get('/check', async (req, res) => {
         const user = (req.session as any).user;
+        console.log(user)
         if (!user) {
             res.status(401).send('User is not logged in');
         } else {
@@ -105,10 +110,18 @@ createConnection().then(async connection => {
         }
     })
 
-    app.use('/uploads', express.static('uploads'))
+    app.use('/uploads', express.static('uploads', {
+        extensions: ['jpg']
+    }))
     Routes.forEach(route => {
         app[route.method](route.route, ...route.action);
     });
+
+    const server = https.createServer({
+        key: key,
+        cert: cert,
+
+    }, app)
     server.listen(4000, () => {
         console.log("Express server has started on port 4000. ");
     });
