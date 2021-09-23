@@ -20,7 +20,7 @@ export default function LoginPage() {
                 Login
             </Header>
             <Form.Input value={email} onChange={setFormInputState(setEmail)} label='Email' />
-            <Form.Input value={password} onChange={setFormInputState(setPassword)} label='Password' />
+            <Form.Input type='password' value={password} onChange={setFormInputState(setPassword)} label='Password' />
             <Form.Button primary>Login</Form.Button>
         </Form>
     )

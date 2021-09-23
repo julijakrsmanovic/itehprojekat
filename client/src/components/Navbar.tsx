@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { User } from '../model'
-import { Menu, Image } from 'semantic-ui-react'
+import { Menu, Image, Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { SERVER } from '../util'
@@ -41,16 +41,35 @@ export default function Navbar(props: Props) {
                 <Menu.Item as={Link} to='/chat'>
                     Chat
                 </Menu.Item>
-
+                <Menu.Item as={Link} to='/request'>
+                    Requests
+                </Menu.Item>
+                <Menu.Item as={Link} to='/post'>
+                    Create post
+                </Menu.Item>
                 <Menu.Menu position='right'>
-                    <Menu.Item>
+                    <Dropdown item inline trigger={(
                         <Image height='30' src={(SERVER + '/' + props.user.image)} />
-                    </Menu.Item>
-                    <Menu.Item link onClick={() => {
-                        axios.post(SERVER + '/logout').then(() => {
-                            window.location.reload();
-                        })
-                    }}>Logout</Menu.Item>
+                    )} >
+                        <Dropdown.Menu>
+                            <Dropdown.Header>
+                                {props.user.firstName + ' ' + props.user.lastName}
+                            </Dropdown.Header>
+                            <Dropdown.Divider />
+                            <Dropdown.Item as={Link} to='/settings'>
+                                Settings
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => {
+                                axios.post(SERVER + '/logout').then(() => {
+                                    window.location.reload();
+                                })
+                            }}>
+                                Logout
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+
                 </Menu.Menu>
             </Menu>
         )
@@ -64,7 +83,7 @@ export default function Navbar(props: Props) {
             </Menu.Item>
             <Menu.Menu position='right'>
                 <Menu.Item>
-                    <Image src={props.user.image} />
+                    <Image src={SERVER + '/' + props.user.image} />
                 </Menu.Item>
                 <Menu.Item link onClick={() => {
                     axios.post(SERVER + '/logout').then(() => {

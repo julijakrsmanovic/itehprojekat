@@ -3,10 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 import { User } from './model';
 import axios from 'axios';
-import { SERVER } from './util';
+import { Context, SERVER } from './util';
 import Navbar from './components/Navbar';
 import Routes from './components/Routes';
 axios.defaults.withCredentials = true;
+
 function App() {
 
   const [user, setUser] = useState<User | undefined>(undefined)
@@ -22,8 +23,14 @@ function App() {
 
   return (
     <div>
-      <Navbar user={user} />
-      <Routes user={user} />
+      <Context.Provider value={{
+        user,
+        loading,
+        setUser
+      }}>
+        <Navbar user={user} />
+        <Routes user={user} />
+      </Context.Provider>
     </div>
   );
 }

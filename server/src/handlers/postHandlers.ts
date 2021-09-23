@@ -86,7 +86,7 @@ export async function getAllPosts(req: Request, res: Response) {
     const posts = await getRepository(Post).find();
     const rel = [...user.rel2, ...user.rel1]
     const filtered = posts.filter(post => {
-        return post.user.id === user.id || rel.find(r => r.userId1 === post.user.id || r.userId2 === post.user.id) !== undefined;
+        return post.user?.id === user.id || rel.find(r => r.userId1 === post.user?.id || r.userId2 === post.user?.id) !== undefined;
     })
     res.json(filtered);
 }

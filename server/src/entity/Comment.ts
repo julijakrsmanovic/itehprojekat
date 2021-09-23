@@ -13,8 +13,8 @@ export class Comment {
     @Column()
     content: string;
 
-    @ManyToOne(t => User, { eager: true })
-    user: User
+    @ManyToOne(t => User, { eager: true, nullable: true, onDelete: 'SET NULL' })
+    user?: User
 
     @ManyToOne(t => Post, { primary: true, onDelete: 'CASCADE' })
     post: Post

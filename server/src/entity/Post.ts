@@ -19,6 +19,6 @@ export class Post {
     @OneToMany(t => Comment, c => c.post, { eager: true })
     comments: Comment[];
 
-    @ManyToOne(t => User, { eager: true })
-    user: User
+    @ManyToOne(t => User, { eager: true, nullable: true, onDelete: 'SET NULL' })
+    user?: User
 }

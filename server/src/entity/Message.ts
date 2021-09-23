@@ -22,7 +22,7 @@ export class Message {
     @JoinColumn({ name: 'userId2', referencedColumnName: 'userId2' })
     relationship: Relationship
 
-    @ManyToOne(t => User)
+    @ManyToOne(t => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'senderId' })
     sender: User;
 

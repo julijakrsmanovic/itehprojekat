@@ -6,10 +6,16 @@ import { User } from "../entity/User";
 
 export async function updateUser(req: Request, res: Response) {
     const user = (req.session as any).user as User;
-    await getRepository(User).update(user.id, req.body);
-    res.sendStatus(204);
+    console.log(req.body)
+    await getRepository(User).update(user.id, {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        image: req.body.image || user.image
+    });
+    const updated = await getRepository(User).findOne(user.id);
+    (req.session as any).user = updated;
+    res.json(updated);
 }
-
 export async function deleteUser(req: Request, res: Response) {
     const user = (req.session as any).user as User;
     if (!user.isAdmin) {
@@ -22,14 +28,19 @@ export async function deleteUser(req: Request, res: Response) {
 
 export async function sendFriendRequest(req: Request, res: Response) {
     const user = (req.session as any).user as User;
-    const id = (req.params as any).id;
+    const id = req.body.id;
 
-    await getRepository(Relationship).insert({
-        status: 'pending',
-        userId1: user.id,
-        userId2: Number(id)
-    })
-
+    try {
+        await getRepository(Relationship).insert({
+            status: 'pending',
+            userId1: user.id,
+            userId2: Number(id)
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send('You already sent request');
+    }
+    (req.session as any).user = await getRepository(User).findOne(user.id)
     res.sendStatus(204);
 }
 
@@ -42,7 +53,11 @@ export async function respondToRequest(req: Request, res: Response) {
         userId1: userId
     }, {
         status: req.body.accept ? 'accepted' : 'rejected'
-    })
+    });
+
+    const u = await getRepository(User).findOne(user.id);
+    (req.session as any).user = u;
+    res.json(u)
 }
 export async function sendMessage(req: Request, res: Response) {
     const userId = req.body.userId;
@@ -58,11 +73,13 @@ export async function sendMessage(req: Request, res: Response) {
         const insertResult = await getRepository(Message).insert({
             ...req.body,
             userId1: userId,
-            userId2: user.id
+            userId2: user.id,
+            senderId: user.id
         })
         res.json({
             id: insertResult.identifiers[0].id
-        })
+        });
+        (req.session as any).user = await getRepository(User).findOne(user.id)
         return;
     }
     const rel2 = await getRepository(Relationship).findOne({
@@ -75,8 +92,10 @@ export async function sendMessage(req: Request, res: Response) {
         const insertResult = await getRepository(Message).insert({
             ...req.body,
             userId2: userId,
-            userId1: user.id
-        })
+            userId1: user.id,
+            senderId: user.id
+        });
+        (req.session as any).user = await getRepository(User).findOne(user.id)
         res.json({
             id: insertResult.identifiers[0].id
         })

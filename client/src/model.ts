@@ -2,13 +2,13 @@
 export interface Comment {
     id?: number,
     content: string,
-    user: User
+    user?: User
 }
 export interface Message {
     id: number,
     userId1: number,
     userId2: number,
-    sender: User,
+    senderId: number,
     content: string,
 }
 
@@ -17,7 +17,7 @@ export interface Post {
     image: string,
     content: string,
     comments: Comment[],
-    user: User
+    user?: User
 }
 
 export interface User {
@@ -27,4 +27,14 @@ export interface User {
     email: string,
     isAdmin: boolean,
     image: string,
+    rel1: Relationship[],
+    rel2: Relationship[]
+
+}
+
+export interface Relationship {
+    userId1: number,
+    userId2: number,
+    messages: Message[],
+    status: 'pending' | 'accepted' | 'rejected'
 }
