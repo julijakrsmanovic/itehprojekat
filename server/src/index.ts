@@ -19,6 +19,7 @@ createConnection().then(async connection => {
     const cert = fs.readFileSync('./cert.pem', 'utf8');
 
 
+
     app.use(cors({
         credentials: true,//protiv xss napada
 
@@ -27,6 +28,7 @@ createConnection().then(async connection => {
 
     }));
     app.use(express.json());
+
     app.use(session({
         secret: 'adsfgdhtydadsfadfsafdsgafsjtiuyi',
         resave: false,
@@ -113,9 +115,12 @@ createConnection().then(async connection => {
     app.use('/uploads', express.static('uploads', {
         extensions: ['jpg']
     }))
+
     Routes.forEach(route => {
         app[route.method](route.route, ...route.action);
     });
+
+
 
     const server = https.createServer({
         key: key,

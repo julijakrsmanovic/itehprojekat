@@ -20,7 +20,7 @@ export default function Navbar(props: Props) {
                         Login
                     </Menu.Item>
                     <Menu.Item as={Link} to='/register'>
-                        Regoster
+                        Register
                     </Menu.Item>
                 </Menu.Menu>
             </Menu>

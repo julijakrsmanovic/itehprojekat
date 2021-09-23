@@ -83,7 +83,13 @@ export default withRouter(function UserPage(props: RouteComponentProps) {
                         </Header>
                         {
                             (selUser.id !== user.id && !isFriend(selUser, user)) ? (
-                                <Button primary>Send request</Button>
+                                <Button primary onClick={async () => {
+                                    try {
+                                        await axios.post(SERVER + '/relationsip', { id: id });
+                                    } catch (error: any) {
+                                        alert(error.response.data);
+                                    }
+                                }}>Send request</Button>
                             ) : (
                                 <div>
                                     <Header textAlign='center' r>User posts</Header>

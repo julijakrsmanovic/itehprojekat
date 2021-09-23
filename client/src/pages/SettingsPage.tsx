@@ -52,14 +52,13 @@ export default function SettingsPage() {
                             <Form.Input value={lastName} onChange={setFormInputState(setLastName)} label='Last name' required />
                             <Ref innerRef={imageRef}>
                                 <Form.Input onChange={e => {
-                                    console.log('on change')
-                                    console.log(e.currentTarget)
+
                                     const imageElement = e.currentTarget as HTMLInputElement;
                                     if (!imageElement || !imageElement.files) {
                                         return;
                                     }
                                     const image = imageElement.files[0];
-                                    console.log(image);
+
                                     const reader = new FileReader();
                                     reader.onload = function (e) {
                                         //@ts-ignore

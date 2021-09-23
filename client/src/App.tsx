@@ -15,7 +15,11 @@ function App() {
 
   useEffect(() => {
     axios.get(SERVER + '/check', { withCredentials: true }).then(res => {
-      setUser(res.data);
+      setUser({
+        rel1: [],
+        rel2: [],
+        ...res.data
+      });
     }).finally(() => {
       setLoading(false);
     })

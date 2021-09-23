@@ -15,7 +15,7 @@ export function useFetch<T>(path: string) {
 
     const [state, setState] = useState<T[]>([])
     const loading = useContext(Context).loading;
-    console.log(loading)
+
     useEffect(() => {
         if (loading) {
             return;
@@ -35,5 +35,5 @@ export const setFormInputState = (setter: ((val: string) => void)) => (e: any) =
 }
 
 export function isFriend(user1: User, user2: User) {
-    return user2.id !== user1.id && (user2.rel1.find(r => r.userId2 === user1.id && r.status === 'accepted') !== undefined || user2.rel2.find(r => r.userId1 === user1.id && r.status === 'accepted') !== undefined)
+    return user2.id !== user1.id && ((user2.rel1 || []).find(r => r.userId2 === user1.id && r.status === 'accepted') !== undefined || (user2.rel2 || []).find(r => r.userId1 === user1.id && r.status === 'accepted') !== undefined)
 }
